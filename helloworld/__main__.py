@@ -1,6 +1,5 @@
 # creating a comand line interface
 import argparse
-import sys
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -70,6 +69,7 @@ def getAbstract(bs, year):
         sts = ST_table.find_all('tr')
         for paper in sts:
             author = paper.find('i').text
+            print(author)
             title = paper.find('b').text 
             abstract = paper.find(style='display:none;font-size:11px;').text.strip()
             abstract = cleanAbstract(abstract)
@@ -92,22 +92,20 @@ def getAbstract(bs, year):
             with open(f'ERROR_{date}.txt', 'a') as f:
                 f.write(f'Não foi encontrada nenhuma programação para o st {STtitle}\n')
                 f.close()
-            pass
         else:
-            #finds 'table' next to 'h4'
             stsTable = programacao.find_next_sibling()
             sts = stsTable.find_all('td')
             for paper in sts:
                 author = paper.find('i').text
+                print(author)
                 title = paper.find('b').text
                 if year in [2013, 2015]:
                     abstract = paper.find(style='font-size:11px;').text.strip()
                     abstract = cleanAbstract(abstract)
-                    listaInterna = [year, event, city, STtitle, coordinators, author, title, abstract]
                 else: 
                     abstract = paper.find(style='display:none;font-size:11px;').text.strip()
                     abstract = cleanAbstract(abstract)
-                    listaInterna = [year, event, city, STtitle, coordinators, author, title, abstract]
+                listaInterna = [year, event, city, STtitle, coordinators, author, title, abstract]
                 listaFinal.append(listaInterna)
 
 def stList(bs, className, year):
@@ -122,20 +120,22 @@ def stList(bs, className, year):
     for st in STtrs:
         STInfos = st.find_all('td')
         STInfos = STInfos[0]
-        # find if 'h4' is in td
         if STInfos.find('h4'):
-                # find 'href' in 'h4'
-                STtitle = STInfos.find('h4')
-                STlink = STtitle.find('a')['href']
+            STtitle = STInfos.find('h4')
+            STlink = STtitle.find('a')['href']
+            reqopen = Request(STlink)
+            req = urlopen(reqopen)
+            soup = BeautifulSoup(req.read(), 'lxml')
+            getAbstract(soup, year)
         elif STInfos.find('h3'):
             STtitle = STInfos.find('h3')
             STlink = STtitle.find('a')['href']
+            reqopen = Request(STlink)
+            req = urlopen(reqopen)
+            soup = BeautifulSoup(req.read(), 'lxml')
+            getAbstract(soup, year)
         else:
             pass
-        reqopen = Request(STlink)
-        req = urlopen(reqopen)
-        soup = BeautifulSoup(req.read(), 'lxml')
-        getAbstract(soup, year)
 
 def request (url, dic, year):
     '''
@@ -150,9 +150,7 @@ def baseUrl(snhYears):
     '''
     Função para definir a URL base para a raspagem dos resumos
     '''
-    # put the int list in a string list
     for year in snhYears:
-        #
         url = f'http://snh{year}.anpuh.org/simposio/public'
         request(url,dic, year)
 
@@ -162,4 +160,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
