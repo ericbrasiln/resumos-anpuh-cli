@@ -1,6 +1,6 @@
 from setuptools import setup
 setup(
-    name = 'resumos-anpuh',
+    name = 'resumos-anpuh-cli',
     version = '0.1.0',
     packages = ['resumos-anpuh'],
     entry_points = {
