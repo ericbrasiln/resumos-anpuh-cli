@@ -1,10 +1,10 @@
 from setuptools import setup
 setup(
-    name = 'helloworld-cli',
+    name = 'resumos-anpuh',
     version = '0.1.0',
-    packages = ['helloworld'],
+    packages = ['resumos-anpuh'],
     entry_points = {
         'console_scripts': [
-            'helloworld = helloworld.__main__:main'
+            'resumos-anpuh = resumos-anpuh.__main__:main'
         ]
     })
