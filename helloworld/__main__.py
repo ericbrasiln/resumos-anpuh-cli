@@ -69,7 +69,6 @@ def getAbstract(bs, year):
         sts = ST_table.find_all('tr')
         for paper in sts:
             author = paper.find('i').text
-            print(author)
             title = paper.find('b').text 
             abstract = paper.find(style='display:none;font-size:11px;').text.strip()
             abstract = cleanAbstract(abstract)
@@ -97,7 +96,6 @@ def getAbstract(bs, year):
             sts = stsTable.find_all('td')
             for paper in sts:
                 author = paper.find('i').text
-                print(author)
                 title = paper.find('b').text
                 if year in [2013, 2015]:
                     abstract = paper.find(style='font-size:11px;').text.strip()
