@@ -1,11 +1,10 @@
-# resumos-anpuh
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5168720.svg)](https://doi.org/10.5281/zenodo.5168720)
-
+# resumos-anpuh-cli
 
 `resumos-anpuh` é uma interface de linha de comando (CLI) escrita em Python com objetivo de raspar e organizar os Resumos dos Simpósios Anuais da História da [Associação Nacional de História - Anpuh](https://anpuh.org.br).
 
 O programa raspa todos os resumos dos SNH 27, 28, 29, 30 e 31, respectivamente dos anos de 2013, 2015, 2017, 2019 e 2021 e organiza em um arquivo CSV.
+
+Foi construído a partir do script _Anpuh Scraper_, [DOI 10.5281/zenodo.5168720](https://doi.org/10.5281/zenodo.5168720), dsiponível [aqui](https://github.com/LABHDUFBA/anpuh-scraper).
 
 Desenvolvido no âmbito do [Laboratório de Humanidades Digitais da UFBA](http://www.labhd.ufba.br/) e parte do [Repositório Digital das Humanidades (PT-BR) - REDHBR](https://labhdufba.github.io/redhbr/).
 
@@ -109,4 +108,4 @@ A ferramenta está funcionando perfeitamente. Qualquer alteração no site ou no
 
 ---
 
-Autor: [Eric Brasil](https://github.com/ericbrasiln)(IHLM-UNILAB), [LABHD-UFBA](http://labhd.ufba.br/)
+Autor: [Eric Brasil](https://github.com/ericbrasiln)(IHLM-UNILAB e [LABHD-UFBA](http://labhd.ufba.br/))
