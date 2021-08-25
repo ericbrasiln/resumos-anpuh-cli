@@ -1,5 +1,7 @@
 # resumos-anpuh-cli
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5252128.svg)](https://doi.org/10.5281/zenodo.5252128)
+
 `resumosanpuh` é uma interface de linha de comando (CLI) escrita em Python com objetivo de raspar e organizar os Resumos dos Simpósios Anuais da História da [Associação Nacional de História - Anpuh](https://anpuh.org.br).
 
 O programa raspa todos os resumos dos SNH 27, 28, 29, 30 e 31, respectivamente dos anos de 2013, 2015, 2017, 2019 e 2021 e organiza em um arquivo CSV.
