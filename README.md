@@ -73,13 +73,13 @@ Após a instalação, para executar a ferramenta basta abrir o terminal e digita
 Opcionalmente é possível definir o nome do arquivo csv final acrescentando `-o` ou `--output` seguido de `<nome_do_arquivo>.csv`. Caso essa opção não seja definida o título do arquivo será `<AAAA-MM-DD_HH-MM-SS>.csv`
 
 ```bash
-resumos-anpuh -y 2013 2019 -o resumos_2013-2019.csv
+resumosanpuh -y 2013 2019 -o resumos_2013-2019.csv
 ```
 
 Também é possível utilizar a opção `-h` ou `--help` para ver a ajuda completa.
 
 ```bash
-resumos-anpuh -h
+resumosanpuh -h
 
 usage: helloworld [-h] -y  [...] [-o]
 
@@ -126,4 +126,4 @@ A ferramenta está funcionando perfeitamente. Qualquer alteração no site ou no
 
 ---
 
-Autor: [Eric Brasil](https://github.com/ericbrasiln)(IHLM-UNILAB e [LABHD-UFBA](http://labhd.ufba.br/))
+Autor: [Eric Brasil](https://github.com/ericbrasiln) (IHLM-UNILAB e [LABHD-UFBA](http://labhd.ufba.br/))
