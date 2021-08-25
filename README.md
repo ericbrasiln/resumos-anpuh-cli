@@ -42,13 +42,17 @@ Para executar o anpuh-scraper, vc precisa clonar ou fazer download do [repositó
 
 A ferramenta consiste em uma ferrameta de interface de linha de comando (CLI tool) escrita em [Python 3](https://www.python.org/). 
 
-Abra o terminal e mude seu caminho até a pasta do `resumos-anpuh` e execute o comando:
+Para informações de como instalar o Python em seu sistema operacional, veja a lição [Introdução e instalação do Python](https://programminghistorian.org/pt/licoes/introducao-instalacao-python) no Programming Historian.
+
+Abra o terminal e mude seu caminho até a pasta do `resumosanpuh` e execute o comando:
 
 ```
 sudo pip3 install -e .
 ```
 
-## Bibliotecas e módulos
+As bibliotecas e módulos, assim como o pacote serão instalados automaticamente.
+
+### Bibliotecas e módulos
 
 - **urllib.requests**: módulo do Python que ajuda a acessar urls.
 [Saiba mais.](https://docs.python.org/pt-br/3/library/urllib.request.htmll)
