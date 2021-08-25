@@ -4,6 +4,9 @@ authors:
   - family-names: Brasil
     given-names: Eric
     orcid: https://orcid.org/0000-0001-5067-8475
-title: ericbrasiln/resumos-anpuh-cli: Primeira versão CLI resumos-anpuh
-version: v1.0
-date-released: 2017-12-18
+title: "Resumos-anpuh CLI"
+title: "My Research Software"
+version: 1.0
+doi: 10.5281/zenodo.5252127
+date-released: 2021-08-24
+url: "https://github.com/ericbrasiln/resumos-anpuh-cli"
