@@ -40,17 +40,19 @@ ___
 
 Para executar o anpuh-scraper, vc precisa clonar ou fazer download do [repositório]() e salvar na pasta em que deseja que os resultados e seus respectivos arquivos sejam armazenados. 
 
-A ferramenta consiste em uma ferrameta de interface de linha de comando (CLI tool) escrita em [Python 3](https://www.python.org/). 
+A ferramenta consiste em uma interface de linha de comando (CLI) escrita em [Python 3](https://www.python.org/). 
 
 Para informações de como instalar o Python em seu sistema operacional, veja a lição [Introdução e instalação do Python](https://programminghistorian.org/pt/licoes/introducao-instalacao-python) no Programming Historian.
 
-Abra o terminal e mude seu caminho até a pasta do `resumosanpuh` e execute o comando:
+Abra o terminal e mude seu caminho até a pasta `resumos-anpuh-cli` e execute o comando:
 
 ```
 sudo pip3 install -e .
 ```
 
-As bibliotecas e módulos, assim como o pacote serão instalados automaticamente.
+OBS: Se você não possui o pip instalado basta executar no terminal `sudo apt install python3-pip` em sistemas operacionais baseados no Ubuntu. Para instruções de instalação no Windows ver essa lição do [Programming Historian](https://programminghistorian.org/es/lecciones/instalar-modulos-python-pip#instrucciones-para-windows).
+
+As bibliotecas e módulos, assim como o pacote, serão instalados automaticamente.
 
 ### Bibliotecas e módulos
 
@@ -64,7 +66,7 @@ As bibliotecas e módulos, assim como o pacote serão instalados automaticamente
 
 ## Usos e opções
 
-Após a instalação, para executar a ferramenta basta abrir o terminal e digitar  `resumos-anpuh` seguido de `-y` ou `--years` e passar os anos que deseja raspar como parâmetro `2013 2015 2017 2019 2021`. 
+Após a instalação, para executar a ferramenta basta abrir o terminal e digitar  `resumosanpuh` seguido de `-y` ou `--years` e passar os anos que deseja raspar como parâmetro `2013 2015 2017 2019 2021`. 
 
 Opcionalmente é possível definir o nome do arquivo csv final acrescentando `-o` ou `--output` seguido de `<nome_do_arquivo>.csv`. Caso essa opção não seja definida o título do arquivo será `<AAAA-MM-DD_HH-MM-SS>.csv`
 
@@ -92,6 +94,10 @@ optional arguments:
   -o , --output         Nome do arquivo de saída no formato .csv. Se essa opção não for definida, o título do arquivo será `<AAAA-MM-DD_HH-MM-SS>.csv`
 ```
 
+![image](https://user-images.githubusercontent.com/58128421/130711906-cdb0ffea-fbd1-4699-885e-1e1bcf00ad9d.png)
+
+---
+
 ## Resultados
 
 A ferramente retorna para o usuário **um CSV (*comma-separated values*) com os dados de todos os trabalhos aceitos nos Simpósio Temáticos dos SNH 27, 28, 29, 30 e 31**.
@@ -101,6 +107,12 @@ O CSV contém as seguintes variáveis para cada resumo:
 `Ano, Evento, Cidade, ST, Coordenadores, Autor(es)/Instituições, Título, Resumo`
 
 Esse arquivo pode ser aberto como uma planilha e trabalhado em banco de dados.
+
+Contando o número de linhas e de linhas por ano, com pandas, temos o seguinte resultado:
+
+![image](https://user-images.githubusercontent.com/58128421/130712111-f8654c2c-0d81-4b65-89ba-b5e567f96fea.png)
+
+---
 
 A ferramenta está funcionando perfeitamente. Qualquer alteração no site ou nos resultados percebida pelos usuários ou sugestões de aprimoramento são bem vindas.
 
