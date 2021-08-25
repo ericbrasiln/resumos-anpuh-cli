@@ -2,9 +2,10 @@ from setuptools import setup
 setup(
     name = 'resumos-anpuh-cli',
     version = '0.1.0',
-    packages = ['resumos-anpuh'],
+    packages = ['resumosanpuh'],
+    install_requires = ['bs4', 'pandas', 'requests', 'lxml'],
     entry_points = {
         'console_scripts': [
-            'resumos-anpuh = resumos-anpuh.__main__:main'
+            'resumosanpuh = resumosanpuh.__main__:main'
         ]
     })
