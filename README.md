@@ -4,7 +4,7 @@
 
 `resumosanpuh` é uma interface de linha de comando (CLI) escrita em Python com objetivo de raspar e organizar os Resumos dos Simpósios Anuais da História da [Associação Nacional de História - Anpuh](https://anpuh.org.br).
 
-O programa raspa todos os resumos dos SNH 27, 28, 29, 30 e 31, respectivamente dos anos de 2013, 2015, 2017, 2019 e 2021 e organiza em um arquivo CSV.
+O programa raspa todos os resumos dos SNH 27, 28, 29, 30, 31 e 32, respectivamente dos anos de 2013, 2015, 2017, 2019, 2021 e 2023 e organiza em um arquivo CSV.
 
 Foi construído a partir do script _Anpuh Scraper_, [DOI 10.5281/zenodo.5168720](https://doi.org/10.5281/zenodo.5168720), dsiponível [aqui](https://github.com/LABHDUFBA/anpuh-scraper).
 
@@ -28,10 +28,10 @@ ___
 
 ## Índice
 
-- [resumos-anpuh-cli](#resumos-anpuh-cli)
+- [Resumos-anpuh CLI](#resumos-anpuh-cli)
   - [Índice](#índice)
   - [Instalação](#instalação)
-  - [Bibliotecas e módulos](#bibliotecas-e-módulos)
+    - [Bibliotecas e módulos](#bibliotecas-e-módulos)
   - [Usos e opções](#usos-e-opções)
   - [Resultados](#resultados)
   - [Licença](#licença)
@@ -81,19 +81,25 @@ Também é possível utilizar a opção `-h` ou `--help` para ver a ajuda comple
 ```bash
 resumosanpuh -h
 
-usage: helloworld [-h] -y  [...] [-o]
+usage: resumosanpuh [-h] -y  [...] [-o] [-v] [-q]
 
-Raspador dos resumos dos Simpósios Nacionais de História da Associação Nacional de História -
-Anpuh. O programa raspa todos os resumos dos SNH 27, 28, 29, 30 e 31, respectivamente dos anos
-de 2013, 2015, 2017, 2019 e 2021. Desenvolvido no âmbito do Laboratório de Humanidades Digitais
-da UFBA e parte do Repositório Digital das Humanidades (PT-BR) - REDHBR.
+Raspador dos resumos dos Simpósios Nacionais de História da Associação
+Nacional de História - Anpuh. O programa raspa todos os resumos dos SNH 27,
+28, 29, 30, 31 e 32, respectivamente dos anos de 2013, 2015, 2017, 2019, 2021
+e 2023. Desenvolvido no âmbito do Laboratório de Humanidades Digitais da UFBA
+e parte do Repositório Digital das Humanidades (PT-BR) - REDHBR.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -y  [ ...], --years  [ ...]
-                        Lista de anos a serem raspados. Exemplo: 2013 2015 2017 2019 2021. Essa
-                        opção é obrigatória.
-  -o , --output         Nome do arquivo de saída no formato .csv. Se essa opção não for definida, o título do arquivo será `<AAAA-MM-DD_HH-MM-SS>.csv`
+                        Lista de anos a serem raspados. Exemplo: 2013 2015
+                        2017 2019 2021 2023. Essa opção é obrigatória.
+  -o , --output         Nome do arquivo de saída no formato .csv. Se essa
+                        opção não for definida, o título do arquivo será
+                        `<AAAA-MM-DD_HH-MM-SS>.csv
+  -v, --verbose         Ativar saída detalhada
+  -q, --quiet           Ativar saída silenciosa
+
 ```
 
 ![image](https://user-images.githubusercontent.com/58128421/130711906-cdb0ffea-fbd1-4699-885e-1e1bcf00ad9d.png)
@@ -102,7 +108,7 @@ optional arguments:
 
 ## Resultados
 
-A ferramente retorna para o usuário **um CSV (*comma-separated values*) com os dados de todos os trabalhos aceitos nos Simpósio Temáticos dos SNH 27, 28, 29, 30 e 31**.
+A ferramente retorna para o usuário **um CSV (*comma-separated values*) com os dados de todos os trabalhos aceitos nos Simpósio Temáticos dos SNH 27, 28, 29, 30, 31 e 32**.
 
 O CSV contém as seguintes variáveis para cada resumo:
 
