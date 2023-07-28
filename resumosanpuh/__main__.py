@@ -1,10 +1,9 @@
-# creating a comand line interface
+# creating a command line interface
 import argparse
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
-import sys
 
 
 dic = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'}
@@ -13,10 +12,12 @@ date = now.strftime("%Y-%m-%d_%H-%M-%S")
 listaFinal = []
 
 parser = argparse.ArgumentParser(description='Raspador dos resumos dos Simpósios Nacionais de História da Associação Nacional de História - Anpuh.\n'
-                                             'O programa raspa todos os resumos dos SNH 27, 28, 29, 30 e 31, respectivamente dos anos de 2013, 2015, 2017, 2019 e 2021.\n'
+                                             'O programa raspa todos os resumos dos SNH 27, 28, 29, 30, 31 e 32, respectivamente dos anos de 2013, 2015, 2017, 2019, 2021 e 2023.\n'
                                              'Desenvolvido no âmbito do Laboratório de Humanidades Digitais da UFBA e parte do Repositório Digital das Humanidades (PT-BR) - REDHBR.')
-parser.add_argument('-y','--years', nargs='+', metavar='', required=True, help='Lista de anos a serem raspados. Exemplo: 2013 2015 2017 2019 2021. Essa opção é obrigatória.')
-parser.add_argument('-o', '--output', metavar='', help='Nome do arquivo de saída no formato .csv. Se essa opção não for definida, o título do arquivo será `<AAAA-MM-DD_HH-MM-SS>.csv', default=f'{date}.csv')
+parser.add_argument('-y','--years', nargs='+', metavar='', required=True, help='Lista de anos a serem raspados. Exemplo: 2013 2015 2017 2019 2021 2023. Essa opção é obrigatória.')
+parser.add_argument('-o', '--output', metavar='', help='Nome do arquivo de saída no formato .csv. Se essa opção não for definida, o título do arquivo será <AAAA-MM-DD_HH-MM-SS>.csv', default=f'{date}.csv')
+parser.add_argument('-v', '--verbose', action='store_true', help='Ativar saída detalhada')
+parser.add_argument('-q', '--quiet', action='store_true', help='Ativar saída silenciosa')
 args = parser.parse_args()
 
 def cleanAbstract(abstract):
@@ -56,19 +57,23 @@ def getAbstract(bs, year):
     if year == 2021:
         city = 'Rio de Janeiro'
         event = 'XXXI'
+    if year == 2023:
+        city = 'São Luís'
+        event = 'XXXII'
     if year in [2013, 2015]:
         STContent = bs.find(class_='content-interna')
     elif year in [2017, 2019]:
         STContent = bs.find(id='conteudo-spacer')
     else:
         STContent = bs.find(class_='col-xl-9 col-lg-8 pl-4 pr-4 pt-3 pb-3 w-100')
-    if year == 2021:
+    if year == 2021 or year == 2023:
         STInfos = STContent.find(class_='container')
         STtitle = STInfos.find('h3').text
         coordinators = STInfos.find('b').text
         ST_table = STInfos.find('table')
         sts = ST_table.find_all('tr')
         for paper in sts:
+            paper = paper.find('ul').find('li')
             author = paper.find('i').text
             title = paper.find('b').text 
             abstract = paper.find(style='display:none;font-size:11px;').text.strip()
@@ -87,7 +92,8 @@ def getAbstract(bs, year):
         #finds 'h4' in STContent
         programacao = STContent.find('h4')
         if programacao is None:
-            print(f'Não foi encontrada nenhuma programação para o st {STtitle}')
+            if args.quiet == False:
+                print(f'Não foi encontrada nenhuma programação para o st {STtitle}')
             #creates a txt file with the error and saves it
             with open(f'ERROR_{date}.txt', 'a') as f:
                 f.write(f'Não foi encontrada nenhuma programação para o st {STtitle}\n')
@@ -111,8 +117,9 @@ def stList(bs, className, year):
     '''
     Função que raspa a lista de Simpósios Temáticos
     '''
-    print(f'Raspando todos os resumos referentes ao ano {year}\n'
-          'Isso pode demorar um pouco...')
+    if args.quiet == False:
+        print(f'Raspando todos os resumos referentes ao ano {year}\n'
+              'Isso pode demorar um pouco...')
     STBoxe = bs.find('table', class_= className)
     STtrs = STBoxe.find_all('tr')
     #find all trs in STtrs
@@ -124,17 +131,37 @@ def stList(bs, className, year):
             STlink = STtitle.find('a')['href']
             reqopen = Request(STlink)
             req = urlopen(reqopen)
-            soup = BeautifulSoup(req.read(), 'lxml')
+            soup = BeautifulSoup(req.read(), 'html.parser' )
             getAbstract(soup, year)
         elif STInfos.find('h3'):
             STtitle = STInfos.find('h3')
             STlink = STtitle.find('a')['href']
             reqopen = Request(STlink)
             req = urlopen(reqopen)
-            soup = BeautifulSoup(req.read(), 'lxml')
+            soup = BeautifulSoup(req.read(), 'html.parser' )
             getAbstract(soup, year)
         else:
             pass
+
+# função para ano de 20203
+def STList2023(bs, className, year):
+    '''
+    Função que raspa a lista de Simpósios Temáticos
+    '''
+    if args.quiet is False:
+        print(f'Raspando todos os resumos referentes ao ano {year}\n'
+              'Isso pode demorar um pouco...')
+    STBoxe = bs.find('div', class_= className)
+    STBoxe = STBoxe.find('div', class_='container')
+    STBoxe = STBoxe.find('div', class_='first mt-4')
+    STtrs = STBoxe.find_all('div', class_='first')
+    for st in STtrs:
+        STInfos = st.find('h5')
+        STlink = STInfos.find('a')['href']
+        reqopen = Request(STlink)
+        req = urlopen(reqopen)
+        soup = BeautifulSoup(req.read(), 'html.parser' )
+        getAbstract(soup, year)
 
 def request (url, dic, year):
     '''
@@ -142,18 +169,30 @@ def request (url, dic, year):
     '''
     reqopen = Request(url, headers=dic)
     req = urlopen(reqopen)
-    bs = BeautifulSoup(req.read(), 'lxml')
-    stList(bs, 'txtConteudo', year)
+    bs = BeautifulSoup(req.read(), 'html.parser' )
+    if year == '2023':
+        STList2023(bs, 'col-xl-9 col-lg-8 pl-4 pr-4 pt-3 pb-3 w-100', year)
+    else:
+        stList(bs, 'txtConteudo', year)
 
 def baseUrl(snhYears):
     '''
     Função para definir a URL base para a raspagem dos resumos
     '''
     for year in snhYears:
-        url = f'http://snh{year}.anpuh.org/simposio/public'
+        if year == '2023':
+            url = f'http://snh{year}.anpuh.org/atividade/hub/sts'
+        else:
+            url = f'http://snh{year}.anpuh.org/simposio/public'
         request(url,dic, year)
 
 def main():
+    if args.verbose:
+        print(f'Iniciando raspagem dos resumos do(s) SNH {args.years}')
+    elif args.quiet:
+        print('Raspagem em modo silencioso')
+    else:
+        print(f'Iniciando raspagem dos resumos do(s) SNH {args.years}')
     baseUrl(args.years)
     saveDF(listaFinal, args.output)
 
