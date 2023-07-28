@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description='Raspador dos resumos dos Simpósio
                                              'O programa raspa todos os resumos dos SNH 27, 28, 29, 30, 31 e 32, respectivamente dos anos de 2013, 2015, 2017, 2019, 2021 e 2023.\n'
                                              'Desenvolvido no âmbito do Laboratório de Humanidades Digitais da UFBA e parte do Repositório Digital das Humanidades (PT-BR) - REDHBR.')
 parser.add_argument('-y','--years', nargs='+', metavar='', required=True, help='Lista de anos a serem raspados. Exemplo: 2013 2015 2017 2019 2021 2023. Essa opção é obrigatória.')
-parser.add_argument('-o', '--output', metavar='', help='Nome do arquivo de saída no formato .csv. Se essa opção não for definida, o título do arquivo será `<AAAA-MM-DD_HH-MM-SS>.csv', default=f'{date}.csv')
+parser.add_argument('-o', '--output', metavar='', help='Nome do arquivo de saída no formato .csv. Se essa opção não for definida, o título do arquivo será <AAAA-MM-DD_HH-MM-SS>.csv', default=f'{date}.csv')
 parser.add_argument('-v', '--verbose', action='store_true', help='Ativar saída detalhada')
 parser.add_argument('-q', '--quiet', action='store_true', help='Ativar saída silenciosa')
 args = parser.parse_args()
