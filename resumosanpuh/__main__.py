@@ -4,43 +4,141 @@ from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
+import pkg_resources
 
+dic = {
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36\
+                (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
+}
 
-dic = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'}
 now = datetime.now()
 date = now.strftime("%Y-%m-%d_%H-%M-%S")
 listaFinal = []
 
-parser = argparse.ArgumentParser(description='Raspador dos resumos dos Simpósios Nacionais de História da Associação Nacional de História - Anpuh.\n'
-                                             'O programa raspa todos os resumos dos SNH 27, 28, 29, 30, 31 e 32, respectivamente dos anos de 2013, 2015, 2017, 2019, 2021 e 2023.\n'
-                                             'Desenvolvido no âmbito do Laboratório de Humanidades Digitais da UFBA e parte do Repositório Digital das Humanidades (PT-BR) - REDHBR.')
-parser.add_argument('-y','--years', nargs='+', metavar='', required=True, help='Lista de anos a serem raspados. Exemplo: 2013 2015 2017 2019 2021 2023. Essa opção é obrigatória.')
-parser.add_argument('-o', '--output', metavar='', help='Nome do arquivo de saída no formato .csv. Se essa opção não for definida, o título do arquivo será <AAAA-MM-DD_HH-MM-SS>.csv', default=f'{date}.csv')
-parser.add_argument('-v', '--verbose', action='store_true', help='Ativar saída detalhada')
-parser.add_argument('-q', '--quiet', action='store_true', help='Ativar saída silenciosa')
+parser = argparse.ArgumentParser(
+        description='Raspador dos resumos dos Simpósios Nacionais de História da Associação Nacional de História - Anpuh.\n'
+                    'O programa raspa todos os resumos dos SNH 27, 28, 29, 30, 31 e 32, respectivamente dos anos de 2013, 2015, 2017, 2019, 2021 e 2023.\n'
+                    'Desenvolvido no âmbito do Laboratório de Humanidades Digitais da UFBA e parte do Repositório Digital das Humanidades (PT-BR) - \
+REDHBR.',
+        epilog='Exemplo de uso para raspar resumos de todos os anos, salvar em .csv e nomear o arquivo de saída como resumos_anpuh: resumosanpuh -y 2013 2015 2017 2019 2021 2023 -f csv -o resumos_anpuh'
+        )
+
+parser.add_argument(
+        '-y', '--years',
+        nargs='+', metavar='',
+        required=True,
+        help='Lista de anos a serem raspados. Exemplo: 2013 2015 2017 2019 2021 2023. Essa opção é obrigatória.'
+)
+
+parser.add_argument(
+        '-f',
+        '--format',
+        metavar='',
+        help='Formato de saída dos dados. Opções: csv (padrão), json.',
+        default='csv'
+)
+
+parser.add_argument(
+        '-o',
+        '--output',
+        metavar='',
+        help='Nome do arquivo de saída no formato .csv. Se essa opção não for\
+definida, o título do arquivo será <AAAA-MM-DD_HH-MM-SS>.csv',
+        default=f'{date}'
+)
+
+parser.add_argument(
+        '-v',
+        '--verbose',
+        action='store_true',
+        help='Ativar saída detalhada. Essa opção é ativada por padrão.'
+)
+
+parser.add_argument(
+        '-q',
+        '--quiet',
+        action='store_true',
+        help='Ativar saída silenciosa'
+)
+
+parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version='resumosanpuh '+pkg_resources.get_distribution('resumos-anpuh-cli').version     
+) 
+
 args = parser.parse_args()
 
-def cleanAbstract(abstract):
-    '''
-    Função que limpa o resumo do evento
-    '''
+
+def cleanAbstract(abstract: str):
+    """
+    Função que limpa o resumo do evento.
+
+    Parameters:
+    abstract (str): resumo do evento
+
+    Returns:
+    abstract (str): resumo do evento limpo'
+
+    Raises:
+    None
+    """
     abstract = abstract.replace('\n', ' ')
-    abstract = abstract.replace('Resumo:','')
-    abstract = abstract.replace('\nOcultar','')
-    abstract = abstract.replace('RESUMO','')
+    abstract = abstract.replace('Resumo:', '')
+    abstract = abstract.replace('\nOcultar', '')
+    abstract = abstract.replace('RESUMO', '')
     return abstract
 
-def saveDF(listaFinal, output):
-    '''
-    Função que salva o DataFrame com os resumos dos simpósios Nacionais de História da Anpuh
-    '''
-    df = pd.DataFrame(listaFinal, columns=['Ano', 'Evento', 'Cidade', 'ST', 'Coordenadores', 'Autor(es)/Instituições', 'Título', 'Resumo'])
-    df.to_csv(f'{output}')
+
+def saveDF(listaFinal:list, format:str, output:str):
+    """
+    Função que salva o DataFrame com os resumos dos simpósios Nacionais de
+    História da Anpuh em um arquivo .csv (padrão) ou .json.
+
+    Parameters:
+        listaFinal (list): lista com os resumos.
+        format (str): formato de saída.
+        output (str): nome do arquivo de saída.
+
+    Raises:
+        ValueError: formato de saída inválido.
+    """
+    if args.quiet is False:
+        print('Salvando DataFrame...', sep='\n')
+    df = pd.DataFrame(
+            listaFinal,
+            columns=[
+                'Ano',
+                'Evento',
+                'Cidade',
+                'ST',
+                'Coordenadores',
+                'Autor(es)/Instituições',
+                'Título',
+                'Resumo'
+                ]
+            )
+    try:
+        if format == 'csv':
+            df.to_csv(f'{output}.csv')
+        elif format == 'json':
+            df.to_json(f'{output}.json')
+    except ValueError:
+        raise ValueError('Formato de saída inválido. Opções: csv, json')
+
 
 def getAbstract(bs, year):
-    '''
-    Função que raspa os resumos de cada simpósio Nacional de História
-    '''
+    """
+    Função que raspa os resumos de cada simpósio Nacional de História.
+
+    Parameters:
+        bs (BeautifulSoup): objeto BeautifulSoup com o html da página.
+        year (int): ano do simpósio.
+    
+    Returns:
+        None
+    """
     year = int(year)
     if year == 2013:
         city = 'Natal'
@@ -65,36 +163,55 @@ def getAbstract(bs, year):
     elif year in [2017, 2019]:
         STContent = bs.find(id='conteudo-spacer')
     else:
-        STContent = bs.find(class_='col-xl-9 col-lg-8 pl-4 pr-4 pt-3 pb-3 w-100')
+        STContent = bs.find(
+                class_='col-xl-9 col-lg-8 pl-4 pr-4 pt-3 pb-3 w-100')
     if year == 2021 or year == 2023:
         STInfos = STContent.find(class_='container')
         STtitle = STInfos.find('h3').text
+        if args.quiet is False:
+            console.print(f'Raspando resumos do ST {STtitle}', sep='\n')
+            print(f'Raspando resumos do ST {STtitle}', sep='\n')
         coordinators = STInfos.find('b').text
         ST_table = STInfos.find('table')
         sts = ST_table.find_all('tr')
         for paper in sts:
             paper = paper.find('ul').find('li')
             author = paper.find('i').text
-            title = paper.find('b').text 
-            abstract = paper.find(style='display:none;font-size:11px;').text.strip()
+            title = paper.find('b').text
+            abstract = paper.find(
+                    style='display:none;font-size:11px;'
+                    ).text.strip()
             abstract = cleanAbstract(abstract)
-            listaInterna = [year, event, city, STtitle, coordinators, author, title, abstract]
+            listaInterna = [
+                    year,
+                    event,
+                    city,
+                    STtitle,
+                    coordinators,
+                    author,
+                    title,
+                    abstract
+                    ]
             listaFinal.append(listaInterna)
     else:
         STInfos = STContent.find_all('table')
         STInfosGeral = STInfos[0]
         sttest = STInfosGeral.find_all('tr')
         STtitle = sttest[0].find('h3').text
+        if args.quiet is False:
+            print(f'Raspando resumos do ST {STtitle}',sep='\n')
         try:
             coordinators = sttest[1].find('b').text
         except:
             coordinators = 'Não foi definido'
-        #finds 'h4' in STContent
+        # finds 'h4' in STContent
         programacao = STContent.find('h4')
         if programacao is None:
             if args.quiet == False:
-                print(f'Não foi encontrada nenhuma programação para o st {STtitle}')
-            #creates a txt file with the error and saves it
+                print(
+                     f'Não foi encontrada nenhuma programação para\
+                             o st {STtitle}', sep='\n')
+            # creates a txt file with the error and saves it
             with open(f'ERROR_{date}.txt', 'a') as f:
                 f.write(f'Não foi encontrada nenhuma programação para o st {STtitle}\n')
                 f.close()
@@ -113,16 +230,22 @@ def getAbstract(bs, year):
                 listaInterna = [year, event, city, STtitle, coordinators, author, title, abstract]
                 listaFinal.append(listaInterna)
 
-def stList(bs, className, year):
-    '''
-    Função que raspa a lista de Simpósios Temáticos
-    '''
+
+def stList(bs: BeautifulSoup, className: str, year: int):
+    """
+    Função que raspa a lista de Simpósios Temáticos.
+
+    Parameters:
+        bs (BeautifulSoup): objeto BeautifulSoup com o html da página.
+        className (str): classe do objeto html.
+        year (int): ano do simpósio.
+    """
     if args.quiet == False:
         print(f'Raspando todos os resumos referentes ao ano {year}\n'
-              'Isso pode demorar um pouco...')
-    STBoxe = bs.find('table', class_= className)
+              'Isso pode demorar um pouco...', sep='\n')
+    STBoxe = bs.find('table', class_=className)
     STtrs = STBoxe.find_all('tr')
-    #find all trs in STtrs
+    # find all trs in STtrs
     for st in STtrs:
         STInfos = st.find_all('td')
         STInfos = STInfos[0]
@@ -131,27 +254,32 @@ def stList(bs, className, year):
             STlink = STtitle.find('a')['href']
             reqopen = Request(STlink)
             req = urlopen(reqopen)
-            soup = BeautifulSoup(req.read(), 'html.parser' )
+            soup = BeautifulSoup(req.read(), 'html.parser')
             getAbstract(soup, year)
         elif STInfos.find('h3'):
             STtitle = STInfos.find('h3')
             STlink = STtitle.find('a')['href']
             reqopen = Request(STlink)
             req = urlopen(reqopen)
-            soup = BeautifulSoup(req.read(), 'html.parser' )
+            soup = BeautifulSoup(req.read(), 'html.parser')
             getAbstract(soup, year)
         else:
             pass
 
-# função para ano de 20203
-def STList2023(bs, className, year):
-    '''
-    Função que raspa a lista de Simpósios Temáticos
-    '''
+
+def STList2023(bs: BeautifulSoup, className: str, year: int):
+    """
+    Função que raspa a lista de Simpósios Temáticos do SNH 32.
+
+    Parameters:
+        bs (BeautifulSoup): objeto BeautifulSoup com o html da página.
+        className (str): classe do objeto html.
+        year (int): ano do simpósio.
+    """
     if args.quiet is False:
         print(f'Raspando todos os resumos referentes ao ano {year}\n'
-              'Isso pode demorar um pouco...')
-    STBoxe = bs.find('div', class_= className)
+              'Isso pode demorar um pouco...', sep='\n')
+    STBoxe = bs.find('div', class_=className)
     STBoxe = STBoxe.find('div', class_='container')
     STBoxe = STBoxe.find('div', class_='first mt-4')
     STtrs = STBoxe.find_all('div', class_='first')
@@ -160,41 +288,56 @@ def STList2023(bs, className, year):
         STlink = STInfos.find('a')['href']
         reqopen = Request(STlink)
         req = urlopen(reqopen)
-        soup = BeautifulSoup(req.read(), 'html.parser' )
+        soup = BeautifulSoup(req.read(), 'html.parser')
         getAbstract(soup, year)
 
-def request (url, dic, year):
-    '''
-    Função que acessa a URL com urlopen e faz o parse do html com BeautifulSoup
-    '''
+
+def request(url: str, dic: dict, year: int):
+    """
+    Função que acessa a URL com urlopen e faz o parse do html com BeautifulSoup.
+
+    Parameters:
+        url (str): url do site.
+        dic (dict): dicionário com o user-agent.
+        year (int): ano do simpósio.
+    """
     reqopen = Request(url, headers=dic)
     req = urlopen(reqopen)
-    bs = BeautifulSoup(req.read(), 'html.parser' )
+    bs = BeautifulSoup(req.read(), 'html.parser')
     if year == '2023':
         STList2023(bs, 'col-xl-9 col-lg-8 pl-4 pr-4 pt-3 pb-3 w-100', year)
     else:
         stList(bs, 'txtConteudo', year)
 
+
 def baseUrl(snhYears):
-    '''
-    Função para definir a URL base para a raspagem dos resumos
-    '''
+    """
+    Função para definir a URL base para a raspagem dos resumos.
+
+    Parameters:
+        snhYears (list): lista com os anos dos simpósios.
+    """
     for year in snhYears:
         if year == '2023':
             url = f'http://snh{year}.anpuh.org/atividade/hub/sts'
         else:
             url = f'http://snh{year}.anpuh.org/simposio/public'
-        request(url,dic, year)
+        request(url, dic, year)
+
 
 def main():
+    """
+    Função principal.
+    """
     if args.verbose:
-        print(f'Iniciando raspagem dos resumos do(s) SNH {args.years}')
+        print(f'Iniciando raspagem dos resumos do(s) SNH {args.years}', sep='\n')
     elif args.quiet:
-        print('Raspagem em modo silencioso')
+        print('Raspagem em modo silencioso', sep='\n')
     else:
-        print(f'Iniciando raspagem dos resumos do(s) SNH {args.years}')
+        print(f'Iniciando raspagem dos resumos do(s) SNH {args.years}', sep='\n')
     baseUrl(args.years)
-    saveDF(listaFinal, args.output)
+    saveDF(listaFinal, args.format, args.output)
+
 
 if __name__ == '__main__':
     main()
