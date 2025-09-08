@@ -1,4 +1,5 @@
 # Output files
+*.json
 *.csv
 *.log
 *ERROR*.txt
