@@ -79,8 +79,8 @@ def getAbstract(bs, year):
     Extrai os trabalhos de uma página de ST.
     2013–2019: fluxo “antigo”
     2021/2023/2025: fluxo “moderno”, com diferenças:
-        - 2023: resumo escondido com style='display:none;font-size:11px;'
-        - 2025: resumo em <div id="resumoCursoXXXX"> (sem display:none)
+        - 2023/2025: prioriza resumo completo em <div id="resumoFullXXXX">
+        - fallback: resumoCursoXXXX ou style='display:none;font-size:11px;'
     """
     if bs is None:
         return
@@ -138,9 +138,13 @@ def getAbstract(bs, year):
                 author = li.find('i').get_text(strip=True) if li.find('i') else ''
                 title = li.find('b').get_text(strip=True) if li.find('b') else ''
 
-                # 2025: resumo em <div id="resumoCursoXXXX">
-                div_abs = li.find('div', id=re.compile(r'^resumoCurso'))
-                # 2023/2021: resumo escondido via style
+                # Prioridade: resumoFull (texto completo) > resumoCurso (truncado)
+                # 2023/2025: resumo com id="resumoFullXXXX" (completo)
+                div_abs = li.find('div', id=re.compile(r'^resumoFull'))
+                # 2025: fallback para resumoCurso se resumoFull não existir
+                if not div_abs:
+                    div_abs = li.find('div', id=re.compile(r'^resumoCurso'))
+                # 2021/2023 antigo: resumo escondido via style
                 if not div_abs:
                     div_abs = li.find(style='display:none;font-size:11px;')
 
